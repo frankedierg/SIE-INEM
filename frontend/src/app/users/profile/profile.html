@@ -1,0 +1,36 @@
+<div class="profile-container">
+  <div *ngIf="loading" class="loading">Cargando perfil...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="success" class="success">{{ success }}</div>
+
+  <div *ngIf="!loading" class="profile-card">
+    <h2>Perfil de Usuario</h2>
+    <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="saveProfile()">
+      <div class="profile-field">
+        <span>Nombre:</span>
+        <input type="text" formControlName="name" />
+      </div>
+      <div class="profile-field">
+        <span>Email:</span>
+        <input type="email" formControlName="email" />
+      </div>
+      <div class="profile-field">
+        <span>Contraseña:</span>
+        <input type="password" formControlName="password" placeholder="Nueva contraseña (opcional)" />
+      </div>
+      <div class="profile-actions">
+        <button type="submit" [disabled]="form.invalid || saving">Guardar</button>
+        <button type="button" (click)="cancelEdit()">Cancelar</button>
+      </div>
+    </form>
+    <div *ngIf="!editMode">
+      <div class="profile-field"><span>Nombre:</span> {{ user.name }}</div>
+      <div class="profile-field"><span>Usuario:</span> {{ user.username }}</div>
+      <div class="profile-field"><span>Email:</span> {{ user.email }}</div>
+      <div class="profile-field"><span>Rol:</span> {{ user.role }}</div>
+      <div class="profile-actions">
+        <button (click)="enableEdit()">Editar Perfil</button>
+      </div>
+    </div>
+  </div>
+</div>

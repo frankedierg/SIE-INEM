@@ -1,0 +1,11 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <a routerLink="/users/login" class="navbar-logo">INEM Evaluación</a>
+    <ul class="navbar-links">
+      <li *ngIf="!isLoggedIn"><a routerLink="/users/login">Iniciar Sesión</a></li>
+      <li *ngIf="!isLoggedIn"><a routerLink="/users/register">Registrarse</a></li>
+      <li *ngIf="isLoggedIn"><a routerLink="/users/profile">Perfil</a></li>
+      <li *ngIf="isLoggedIn"><a href="#" (click)="logout()">Cerrar Sesión</a></li>
+    </ul>
+  </div>
+</nav>
