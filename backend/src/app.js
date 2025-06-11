@@ -11,25 +11,40 @@ const groupsRoutes = require('./routes/groups');
 
 const app = express();
 const path = require('path');
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:4200',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+}));
+
 app.use(express.json());
 
-// Servir archivos estáticos de Angular
-app.use(express.static(path.join(__dirname, '../../frontend/dist')));
-
-// Routes
-   app.use('/api/auth', authRoutes);
-   app.use('/api/grades', gradesRoutes);
-   app.use('/api/subjects', subjectsRoutes);
-   app.use('/api/performances', performancesRoutes);
-   app.use('/api/groups', groupsRoutes);
-   app.use('/api/remediations', require('./routes/remediations'));
-   app.use('/api/reports', require('./routes/reports'));
-   app.use('/api/usuarios', userRoutes);
-
-// Fallback SPA: cualquier ruta no API devuelve index.html
+// Middleware para responder a todas las preflight requests (CORS OPTIONS)
 app.use((req, res, next) => {
-  res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+// Servir archivos estáticos de Angular
+app.use(express.static(path.join(__dirname, '../../frontend/dist/frontend')));
+
+// Rutas de API (asegúrate de que estén antes del fallback SPA)
+app.use('/api/auth', authRoutes);
+app.use('/api/grades', gradesRoutes);
+app.use('/api/subjects', subjectsRoutes);
+app.use('/api/performances', performancesRoutes);
+app.use('/api/groups', groupsRoutes);
+app.use('/api/remediations', require('./routes/remediations'));
+app.use('/api/reports', require('./routes/reports'));
+app.use('/api/usuarios', userRoutes);
+
+// Fallback SPA: cualquier ruta no API devuelve index.html (DEBE IR AL FINAL)
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/dist/frontend/index.html'));
 });
 
 module.exports = app;

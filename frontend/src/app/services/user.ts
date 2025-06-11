@@ -44,6 +44,6 @@ export class UserService {
   }
 
   private handleError(error: HttpErrorResponse) {
-    return throwError(() => error.error?.message || 'Error en la petición');
+    return throwError(() => error); // Lanza el objeto completo para que el componente pueda acceder a status y message
   }
 }

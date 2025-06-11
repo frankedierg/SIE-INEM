@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -20,7 +20,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       username: ['', Validators.required],
@@ -29,6 +30,7 @@ export class LoginComponent {
   }
 
   onSubmit() {
+    this.error = null;
     if (this.form.invalid) return;
     this.userService.login(this.form.value).subscribe({
       next: (res) => {
@@ -36,9 +38,15 @@ export class LoginComponent {
         window.location.href = '/users/profile';
       },
       error: (err) => {
-        this.error = err;
+        if (err && err.status === 401) {
+          this.error = 'Credenciales inválidas';
+        } else if (err && err.error && err.error.message) {
+          this.error = err.error.message;
+        } else {
+          this.error = 'Ocurrió un error al intentar iniciar sesión.';
+        }
+        this.cdr.detectChanges();
       }
     });
   }
 }
-

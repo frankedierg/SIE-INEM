@@ -57,4 +57,30 @@ router.get('/profile', auth, async (req, res) => {
   }
 });
 
+// Actualizar perfil del usuario autenticado
+router.put('/profile', auth, async (req, res) => {
+  try {
+    const updates = {};
+    if (req.body.name) updates.name = req.body.name;
+    if (req.body.email) updates.email = req.body.email;
+    if (req.body.password && req.body.password.length > 0) {
+      const bcrypt = require('bcryptjs');
+      updates.password = await bcrypt.hash(req.body.password, 10);
+    }
+    const user = await User.findByIdAndUpdate(req.user._id, updates, { new: true });
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+    res.json({
+      id: user._id,
+      username: user.username,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    });
+  } catch (error) {
+    res.status(400).json({ message: 'No se pudo actualizar el perfil', error: error.message });
+  }
+});
+
 module.exports = router;
