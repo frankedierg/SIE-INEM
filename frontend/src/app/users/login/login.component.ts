@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -21,7 +21,8 @@ export class LoginComponent {
     private fb: FormBuilder,
     private userService: UserService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
   ) {
     this.form = this.fb.group({
       username: ['', Validators.required],
@@ -35,17 +36,21 @@ export class LoginComponent {
     this.userService.login(this.form.value).subscribe({
       next: (res) => {
         localStorage.setItem('token', res.token);
-        window.location.href = '/users/profile';
+        this.zone.run(() => {
+          this.router.navigateByUrl('/users/profile');
+        });
       },
       error: (err) => {
-        if (err && err.status === 401) {
-          this.error = 'Credenciales inválidas';
-        } else if (err && err.error && err.error.message) {
-          this.error = err.error.message;
-        } else {
-          this.error = 'Ocurrió un error al intentar iniciar sesión.';
-        }
-        this.cdr.detectChanges();
+        this.zone.run(() => {
+          if (err && err.status === 401) {
+            this.error = 'Credenciales inválidas';
+          } else if (err && err.error && err.error.message) {
+            this.error = err.error.message;
+          } else {
+            this.error = 'Ocurrió un error al intentar iniciar sesión.';
+          }
+          this.cdr.detectChanges();
+        });
       }
     });
   }

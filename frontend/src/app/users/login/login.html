@@ -7,5 +7,5 @@
   <input id="password" formControlName="password" type="password" required>
 
   <button type="submit" [disabled]="form.invalid">Entrar</button>
-  <div *ngIf="error" style="color:red;">{{ error }}</div>
+  <div *ngIf="error" class="login-error-message">{{ error }}</div>
 </form>
