@@ -1,9 +1,9 @@
 <div class="profile-container">
   <div *ngIf="loading" class="loading">Cargando perfil...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
-  <div *ngIf="success" class="success">{{ success }}</div>
-
+  
   <div *ngIf="!loading" class="profile-card">
+    <div *ngIf="success" class="success">{{ success }}</div>
     <h2>Perfil de Usuario</h2>
     <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="saveProfile()">
       <div class="profile-field">

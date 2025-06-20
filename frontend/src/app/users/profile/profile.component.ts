@@ -31,6 +31,7 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.success = null;
     console.log('ngOnInit ejecutado');
     if (typeof window === 'undefined') {
       // No ejecutar en SSR
@@ -81,6 +82,11 @@ export class ProfileComponent implements OnInit {
         this.editMode = false;
         this.user = { ...this.user, ...data };
         this.saving = false;
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.success = null;
+          this.cdr.detectChanges();
+        }, 3000);
       },
       error: (err) => {
         this.error = err;
